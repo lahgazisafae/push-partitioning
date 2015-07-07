@@ -141,7 +141,20 @@ public class Push2 {
 	 */
 	public void pushDown(boolean PROC){
 		
-		//first determine the top row of the enclosing rectangle of the processor
+		
+		/* *** a valid Push may not increase the volume of communication, so select all z such that:
+		 * 1. Processor X is introduced to no more than one new row OR column
+		 * 2. No processor is assigned an element in k if k is outside that processor's enclosing rectangle
+		 * 3. A processor cannot be assigned an element in k, if it did not already own an element in k, unless 
+		 * doing so would also remove that processor from some other row or column
+		 */
+
+		//AGAIN boolean only works because there are only two processors at the moment; could possibly use int or String?
+		boolean hasPROC = false; //boolean to determine if a particular row has PROC or not
+		boolean hasOTHER = false; //boolean to determine if a particular row has the other processor or not
+		
+		
+		//first determine the top row of the enclosing rectangle of the processor; referred to as k in conditions above
 		int topEdge  =0;
 		for(int i = 0; i <matrix.length; i++){
 			for(int j = 0; j<matrix[i].length; j++)
@@ -157,50 +170,50 @@ public class Push2 {
 		//go through row at topEdge
 		for(int l =0; l<matrix.length;l++){
 			
-			//go through each entry in this row, if it belongs to PROC then
+			//go through each entry in this row, if it belongs to PROC (referred to as Processor X in conditions above) then
 			if(matrix[topEdge][l]==PROC){
 				
-			//compare to entry & row below (because we are pushing down)
+			//compare to entry below & the row it is in (because we are pushing down)
 				
-				if(matrix[topEdge+1][l] == PROC){
+				if(matrix[topEdge+1][l] == PROC){//if the entry below belongs to PROC then
 					//don't do anything; move to next one
 				}
 				else{
 					
-					matrix[topEdge]
+					for(int m =0; m<matrix.length;m++){
+						
+						if(matrix[topEdge+1][m] == PROC){//find out if row below this entry has entries that belong to PROC
+							hasPROC = true;
+							break;
+						}
+					}
 					
+					//if the row below the topEdge row has PROC then we are not introducing it to a new row
+					//and because we are moving down it is in the same column and not introduced to a new column
+					//hence condition 1 is satisfied 
 					
+					for(int m =0; m<matrix.length;m++){
+						
+						if(matrix[topEdge][m] == !PROC){
+							//find out if the row the current entry is on has
+							// entries that are owned by another processor as well as PROC
+							hasOTHER = true;
+							break;
+						}
+					}
 					
+					//if the row k or topEdge has another processor then conditions 2 & 3 are satisfied
 					
-					/* *** a valid Push may not increase the volume of communication, so select all z such that:
-						 * 1. Processor X is introduced to no more than one new row OR column
-						 * 2. No processor is assigned an element in k if k is outside that processor's enclosing rectangle
-						 * 3. A processor cannot be assigned an element in k, if it did not already own an element in k, unless 
-						 * doing so would also remove that processor from some other row or column
-						 */
-					
-					
-					
-					
-					
+					if(hasOTHER & hasPROC){
+						
+						//then switch? 
+						matrix[topEdge+1][l] = PROC;
+						matrix[topEdge][l] = PRO1; //figure out how to refer to other processor without specific name ? 
+						
+					}
+	
 				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+
 				
 				
 			}
